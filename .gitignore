@@ -1,0 +1,9 @@
+/*/bin/*
+/*/obj/*
+/*.suo
+/*.sln.VisualState.xml
+/*.user
+/*.VisualState.xml
+/*.cache
+/TestResults/*
+*ReSharper*
