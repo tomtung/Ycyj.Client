@@ -29,12 +29,6 @@ namespace Ycyj.Client.Model
             return metadata.Properties.Any(t => t.Name == name);
         }
 
-        public static Type GetPropertyType(this NodeMetadata nodeMetadata, String name)
-        {
-            NodePropertyMetadata metadata = GetPropertyMetadata(nodeMetadata, name);
-            return metadata != null ? metadata.Type : null;
-        }
-
         public static NodePropertyMetadata GetPropertyMetadata(this NodeMetadata metadata, string name)
         {
             return metadata.HasProperty(name)

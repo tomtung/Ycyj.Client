@@ -5,7 +5,7 @@ namespace Ycyj.Client.Model
     public class NodeProperty
     {
         private readonly NodePropertyMetadata _metadata;
-        private readonly object _value;
+        private object _value;
 
         public NodeProperty(NodePropertyMetadata metadata, object value)
         {
@@ -15,7 +15,7 @@ namespace Ycyj.Client.Model
                                             "value");
 
             _metadata = metadata;
-            _value = value;
+            Value = value;
         }
 
         public NodePropertyMetadata PropertyMetadata
@@ -26,6 +26,12 @@ namespace Ycyj.Client.Model
         public object Value
         {
             get { return _value; }
+            set
+            {
+                if (!PropertyMetadata.IsAssignableFromValue(value))
+                    throw new NotSupportedException();
+                _value = value;
+            }
         }
 
         public string PropertyName
@@ -36,6 +42,19 @@ namespace Ycyj.Client.Model
         public Type PropertyType
         {
             get { return _metadata.Type; }
+        }
+
+        public bool TrySetValue(object value)
+        {
+            try
+            {
+                Value = value;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

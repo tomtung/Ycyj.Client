@@ -7,28 +7,44 @@ namespace Ycyj.Client.Model
 {
     public class Node : DynamicObject
     {
+        public readonly string Id;
         private readonly NodeMetadata _metadata;
-        private readonly IDictionary<String, Object> _propertyValues = new Dictionary<string, object>();
+        private readonly IEnumerable<NodeProperty> _properties;
+
+        #region Constructors
+
+        public Node(string id, NodeMetadata metadata)
+        {
+            Id = id;
+            _metadata = metadata;
+
+            _properties = (from pm in Metadata.Properties
+                           let value = DefaultValueFor(pm.Type)
+                           select new NodeProperty(pm, value)).ToList();
+        }
+
+        public Node(string id, Node node) : this(id, node.Metadata)
+        {
+            _properties = new List<NodeProperty>(_properties);
+        }
 
         public Node(NodeMetadata metadata)
+            : this(Guid.NewGuid().ToString(), metadata)
         {
-            _metadata = metadata;
         }
 
         public Node(Node node)
+            : this(Guid.NewGuid().ToString(), node)
         {
-            _metadata = new NodeMetadata(node.Metadata);
-            _propertyValues = new Dictionary<string, object>(_propertyValues);
         }
+
+        #endregion Constructors
+
+        #region Properties
 
         public IEnumerable<NodeProperty> Properties
         {
-            get
-            {
-                return from metadata in Metadata.Properties
-                       let value = GetPropertyValue(metadata.Name)
-                       select new NodeProperty(metadata, value);
-            }
+            get { return _properties; }
         }
 
         public NodeMetadata Metadata
@@ -36,29 +52,31 @@ namespace Ycyj.Client.Model
             get { return _metadata; }
         }
 
-        public object GetPropertyValue(string propertyName)
+        #endregion
+
+        public object this[string propertyName]
         {
-            if (!Metadata.HasProperty(propertyName))
-                throw new ArgumentException(propertyName + @" is not a legal property.", "propertyName");
+            get { return GetProperty(propertyName).Value; }
+            set { GetProperty(propertyName).Value = value; }
+        }
 
-            // If the value is set, return it.
-            if (_propertyValues.ContainsKey(propertyName))
-                return _propertyValues[propertyName];
-
-            Type type = Metadata.GetPropertyType(propertyName);
-            // Otherwise, Return the default value of its type if it's of a value type
+        private static object DefaultValueFor(Type type)
+        {
             if (type.IsValueType) return Activator.CreateInstance(type);
-            // Otherwise, return an empty string if it's a string
             if (type == typeof (string)) return string.Empty;
-            // Otherwise, return null
             return null;
         }
 
-        public bool TryGetPropertyValue(string propertyName, out object value)
+        public NodeProperty GetProperty(string propertyName)
+        {
+            return Properties.Where(p => p.PropertyName == propertyName).First();
+        }
+
+        public bool TryGetProperty(string propertyName, out NodeProperty value)
         {
             try
             {
-                value = GetPropertyValue(propertyName);
+                value = GetProperty(propertyName);
                 return true;
             }
             catch
@@ -68,45 +86,22 @@ namespace Ycyj.Client.Model
             }
         }
 
-        public void SetPropertyValue(string propertyName, object value)
-        {
-            if (!Metadata.HasProperty(propertyName))
-                throw new ArgumentException(propertyName + @" is not a legal property.", "propertyName");
-
-            if (!Metadata.GetPropertyMetadata(propertyName).IsAssignableFromValue(value))
-                throw new ArgumentException(propertyName + @" is not assignable from value " + value, "value");
-
-            if (!_propertyValues.ContainsKey(propertyName))
-                _propertyValues.Add(propertyName, value);
-            else
-                _propertyValues[propertyName] = value;
-        }
-
-        public bool TrySetPropertyValue(string propertyName, object value)
-        {
-            try
-            {
-                SetPropertyValue(propertyName, value);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        #region DynamicObject
-
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            return TryGetPropertyValue(binder.Name, out result);
+            NodeProperty property;
+            if (TryGetProperty(binder.Name, out property))
+            {
+                result = property.Value;
+                return true;
+            }
+            result = null;
+            return false;
         }
 
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-            return TrySetPropertyValue(binder.Name, value);
+            NodeProperty property;
+            return TryGetProperty(binder.Name, out property) && property.TrySetValue(value);
         }
-
-        #endregion
     }
 }

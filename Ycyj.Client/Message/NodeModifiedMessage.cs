@@ -1,4 +1,3 @@
-using System.Windows;
 using GalaSoft.MvvmLight.Messaging;
 using Ycyj.Client.Model;
 
@@ -6,18 +5,8 @@ namespace Ycyj.Client.Message
 {
     public class NodeModifiedMessage : MessageBase
     {
-        private readonly Node _node;
         private readonly NodeModifyType _modifyType;
-
-        public NodeModifyType ModifyType
-        {
-            get { return _modifyType; }
-        }
-
-        public Node Node
-        {
-            get { return _node; }
-        }
+        private readonly Node _node;
 
         public NodeModifiedMessage(Node node, NodeModifyType modifyType)
         {
@@ -31,10 +20,21 @@ namespace Ycyj.Client.Message
             _modifyType = modifyType;
         }
 
-        public NodeModifiedMessage(object sender, object target, Node node, NodeModifyType modifyType) : base(sender, target)
+        public NodeModifiedMessage(object sender, object target, Node node, NodeModifyType modifyType)
+            : base(sender, target)
         {
             _node = node;
             _modifyType = modifyType;
+        }
+
+        public NodeModifyType ModifyType
+        {
+            get { return _modifyType; }
+        }
+
+        public Node Node
+        {
+            get { return _node; }
         }
     }
 

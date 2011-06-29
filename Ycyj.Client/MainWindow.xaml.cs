@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Diagnostics;
+using System.Windows;
 using Ycyj.Client.ViewModel;
 
 namespace Ycyj.Client
@@ -12,6 +14,20 @@ namespace Ycyj.Client
         {
             InitializeComponent();
             Closing += (s, e) => ViewModelLocator.Cleanup();
+        }
+
+        private void treeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            try
+            {
+                dynamic treeView = sender;
+                treeView.DataContext.SelectedTreeNode = treeView.SelectedItem;
+            }
+            catch (Exception exception)
+            {
+                Debug.WriteLine(exception.Message);
+                Debug.WriteLine(exception.StackTrace);
+            }
         }
     }
 }
