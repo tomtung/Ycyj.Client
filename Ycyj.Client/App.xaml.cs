@@ -1,7 +1,5 @@
 ﻿using System.Windows;
 using GalaSoft.MvvmLight.Threading;
-using Ninject;
-using Ycyj.Client.Model;
 
 namespace Ycyj.Client
 {
@@ -10,8 +8,6 @@ namespace Ycyj.Client
     /// </summary>
     public partial class App : Application
     {
-        public static readonly IKernel Kernel = new StandardKernel(new DefaultNinjectModule());
-
         static App()
         {
             DispatcherHelper.Initialize();

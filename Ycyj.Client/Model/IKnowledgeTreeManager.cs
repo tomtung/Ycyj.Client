@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using Ninject;
 
 namespace Ycyj.Client.Model
 {
@@ -13,10 +12,13 @@ namespace Ycyj.Client.Model
 
     internal class MockKnowledgeTreeManager : IKnowledgeTreeManager
     {
+        private readonly INodeMetadataManager _nodeMetadataManager;
         private TreeNode _root;
 
-        public MockKnowledgeTreeManager()
+        public MockKnowledgeTreeManager(INodeMetadataManager nodeMetadataManager)
         {
+            if (nodeMetadataManager == null) throw new ArgumentNullException("nodeMetadataManager");
+            _nodeMetadataManager = nodeMetadataManager;
             ResetRoot();
         }
 
@@ -60,7 +62,7 @@ namespace Ycyj.Client.Model
 
         private void ResetRoot()
         {
-            NodeMetadata nodeMetadata = App.Kernel.Get<INodeMetadataManager>()["知识点"];
+            NodeMetadata nodeMetadata = _nodeMetadataManager["知识点"];
 
             dynamic n0 = new Node("0", nodeMetadata);
             n0.标题 = "n0";
