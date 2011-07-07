@@ -1,84 +1,69 @@
 using System;
-using System.Diagnostics;
+using System.Runtime.Serialization;
 
 namespace Ycyj.Client.Model
 {
+    /// <summary>
+    /// 用于载入和保存知识点树的类实现此方法。
+    /// </summary>
     public interface IKnowledgeTreeManager
     {
+        /// <summary>
+        /// 知识树的根。它不对应任何<see cref="Node"/>。
+        /// </summary>
         TreeNode Root { get; }
+
+        /// <summary>
+        /// 保存对以<see cref="Root"/>为根的知识树所做的修改。
+        /// </summary>
         void UpdateTree();
+
+        /// <summary>
+        /// 忽略当前对以<see cref="Root"/>为根的树的修改，重新载入。
+        /// <see cref="Root"/>对象本身不会改变，但其<see cref="TreeNode.Children"/>内容会被重置。
+        /// </summary>
+        /// <exception cref="KnowledgeTreeLoadFailException">当重新载入失败时抛出。</exception>
         void ReloadTree();
+
+        /// <summary>
+        /// 重置整棵树为空，且<see cref="Root"/>被置为一个新对象。
+        /// </summary>
+        void ResetTree();
     }
 
-    internal class MockKnowledgeTreeManager : IKnowledgeTreeManager
+    public static class KnowledgeTreeManagerHelper
     {
-        private readonly INodeMetadataManager _nodeMetadataManager;
-        private TreeNode _root;
-
-        public MockKnowledgeTreeManager(INodeMetadataManager nodeMetadataManager)
+        /// <returns>载入成功则返回<code>true</code>，否则返回<code>false</code></returns>
+        public static bool TryReloadTree(this IKnowledgeTreeManager treeManager)
         {
-            if (nodeMetadataManager == null) throw new ArgumentNullException("nodeMetadataManager");
-            _nodeMetadataManager = nodeMetadataManager;
-            ResetRoot();
-        }
-
-        #region IKnowledgeTreeManager Members
-
-        public TreeNode Root
-        {
-            get
+            try
             {
-                Debug.WriteLine("MockKnowledgeTreeManager.Root");
-                return _root;
+                treeManager.UpdateTree();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
+    }
 
-        public void UpdateTree()
+    public class KnowledgeTreeLoadFailException : Exception
+    {
+        public KnowledgeTreeLoadFailException()
         {
-            Debug.WriteLine("MockKnowledgeTreeManager.UpdateTree()");
-
-            Action<TreeNode, int> printTreeNode = null;
-            printTreeNode =
-                (node, depth) =>
-                    {
-                        for (int i = 0; i < depth; ++i)
-                            Debug.Write('-');
-                        Debug.WriteLine(node.Node["标题"]);
-
-                        foreach (TreeNode child in node.Children)
-                            printTreeNode(child, depth + 1);
-                    };
-
-            printTreeNode(_root, 0);
         }
 
-        public void ReloadTree()
+        public KnowledgeTreeLoadFailException(string message) : base(message)
         {
-            Debug.WriteLine("MockKnowledgeTreeManager.ReloadTree()");
-            ResetRoot();
         }
 
-        #endregion
-
-        private void ResetRoot()
+        public KnowledgeTreeLoadFailException(string message, Exception innerException) : base(message, innerException)
         {
-            NodeMetadata nodeMetadata = _nodeMetadataManager["知识点"];
+        }
 
-            dynamic n0 = new Node("0", nodeMetadata);
-            n0.标题 = "n0";
-            dynamic n1 = new Node("1", nodeMetadata);
-            n1.标题 = "n1";
-            dynamic n2 = new Node("2", nodeMetadata);
-            n2.标题 = "n2";
-            var n3 = new Node("3", nodeMetadata);
-            n3["标题"] = "n3";
-
-            _root = new TreeNode(n0);
-            {
-                _root.AddChild(n1);
-                dynamic child2 = _root.AddChild(n2);
-                child2.AddChild(n3);
-            }
+        protected KnowledgeTreeLoadFailException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
         }
     }
 }

@@ -13,6 +13,9 @@ namespace Ycyj.Client.Model
 
         #region Constructors
 
+        /// <summary>
+        /// 以<param name="id" />为<see cref="Id"/>，<param name="metadata"/>为<see cref="Metadata"/>创建新节点。
+        /// </summary>
         public Node(string id, NodeMetadata metadata)
         {
             Id = id;

@@ -6,7 +6,7 @@ namespace Ycyj.Client.Model
     {
         public override void Load()
         {
-            Bind<IKnowledgeTreeManager>().To<MockKnowledgeTreeManager>().InSingletonScope();
+            Bind<IKnowledgeTreeManager>().To<KnowledgeTreeManager>().InSingletonScope();
             Bind<INodeMetadataManager>().To<MockNodeMetadataManager>().InSingletonScope();
         }
     }

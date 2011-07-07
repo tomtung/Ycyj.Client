@@ -37,22 +37,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GalaSoft.MvvmLight.Extras.WPF4">
-      <HintPath>lib\GalaSoft.MvvmLight.Extras.WPF4.dll</HintPath>
+      <HintPath>..\lib\GalaSoft.MvvmLight.Extras.WPF4.dll</HintPath>
     </Reference>
     <Reference Include="GalaSoft.MvvmLight.WPF4">
-      <HintPath>lib\GalaSoft.MvvmLight.WPF4.dll</HintPath>
-    </Reference>
-    <Reference Include="Moq">
-      <HintPath>lib\Moq.dll</HintPath>
+      <HintPath>..\lib\GalaSoft.MvvmLight.WPF4.dll</HintPath>
     </Reference>
     <Reference Include="Ninject">
-      <HintPath>lib\Ninject.dll</HintPath>
+      <HintPath>..\lib\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\lib\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -77,6 +74,7 @@
     <Compile Include="Model\IKnowledgeTreeManager.cs" />
     <Compile Include="Model\INodeMetadataManager.cs" />
     <Compile Include="Model\INodePairManager.cs" />
+    <Compile Include="Model\KnowledgeTreeManager.cs" />
     <Compile Include="Model\MsDoc.cs" />
     <Compile Include="Model\Node.cs" />
     <Compile Include="Model\NodeMetadata.cs" />
