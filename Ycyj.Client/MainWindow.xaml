@@ -19,11 +19,11 @@
         <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
 
-      <TreeView Grid.Row="0" ItemsSource="{Binding TreeRoot.Children}" x:Name="treeView">
+      <TreeView Grid.Row="0" ItemsSource="{Binding TreeRoot.Children}">
         <i:Interaction.Triggers>
           <i:EventTrigger EventName="SelectedItemChanged">
-                        <Command:EventToCommand Command="{Binding SelectedItemChangedCommand, Mode=OneWay}"
-                                                CommandParameter="{Binding ElementName=treeView, Path=SelectedItem}"/>
+            <Command:EventToCommand Command="{Binding SelectedItemChangedCommand, Mode=OneWay}"
+                                    CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource FindAncestor, AncestorType=TreeView}}" />
           </i:EventTrigger>
         </i:Interaction.Triggers>
         <TreeView.ItemContainerStyle>
