@@ -1,39 +1,39 @@
-using System;
+ï»¿using System;
 using System.Runtime.Serialization;
 
 namespace Ycyj.Client.Model
 {
     /// <summary>
-    /// ÓÃÓÚÔØÈëºÍ±£´æÖªÊ¶µãÊ÷µÄÀàÊµÏÖ´Ë·½·¨¡£
+    /// ç”¨äºè½½å…¥å’Œä¿å­˜çŸ¥è¯†ç‚¹æ ‘çš„ç±»å®ç°æ­¤æ–¹æ³•ã€‚
     /// </summary>
     public interface IKnowledgeTreeManager
     {
         /// <summary>
-        /// ÖªÊ¶Ê÷µÄ¸ù¡£Ëü²»¶ÔÓ¦ÈÎºÎ<see cref="Node"/>¡£
+        /// çŸ¥è¯†æ ‘çš„æ ¹ã€‚å®ƒä¸å¯¹åº”ä»»ä½•<see cref="Node"/>ã€‚
         /// </summary>
         TreeNode Root { get; }
 
         /// <summary>
-        /// ±£´æ¶ÔÒÔ<see cref="Root"/>Îª¸ùµÄÖªÊ¶Ê÷Ëù×öµÄĞŞ¸Ä¡£
+        /// ä¿å­˜å¯¹ä»¥<see cref="Root"/>ä¸ºæ ¹çš„çŸ¥è¯†æ ‘æ‰€åšçš„ä¿®æ”¹ã€‚
         /// </summary>
         void UpdateTree();
 
         /// <summary>
-        /// ºöÂÔµ±Ç°¶ÔÒÔ<see cref="Root"/>Îª¸ùµÄÊ÷µÄĞŞ¸Ä£¬ÖØĞÂÔØÈë¡£
-        /// <see cref="Root"/>¶ÔÏó±¾Éí²»»á¸Ä±ä£¬µ«Æä<see cref="TreeNode.Children"/>ÄÚÈİ»á±»ÖØÖÃ¡£
+        /// å¿½ç•¥å½“å‰å¯¹ä»¥<see cref="Root"/>ä¸ºæ ¹çš„æ ‘çš„ä¿®æ”¹ï¼Œé‡æ–°è½½å…¥ã€‚
+        /// <see cref="Root"/>å¯¹è±¡æœ¬èº«ä¸ä¼šæ”¹å˜ï¼Œä½†å…¶<see cref="TreeNode.Children"/>å†…å®¹ä¼šè¢«é‡ç½®ã€‚
         /// </summary>
-        /// <exception cref="KnowledgeTreeLoadFailException">µ±ÖØĞÂÔØÈëÊ§°ÜÊ±Å×³ö¡£</exception>
+        /// <exception cref="KnowledgeTreeLoadFailException">å½“é‡æ–°è½½å…¥å¤±è´¥æ—¶æŠ›å‡ºã€‚</exception>
         void ReloadTree();
 
         /// <summary>
-        /// ÖØÖÃÕû¿ÃÊ÷Îª¿Õ£¬ÇÒ<see cref="Root"/>±»ÖÃÎªÒ»¸öĞÂ¶ÔÏó¡£
+        /// é‡ç½®æ•´æ£µæ ‘ä¸ºç©ºï¼Œä¸”<see cref="Root"/>è¢«ç½®ä¸ºä¸€ä¸ªæ–°å¯¹è±¡ã€‚
         /// </summary>
         void ResetTree();
     }
 
     public static class KnowledgeTreeManagerHelper
     {
-        /// <returns>ÔØÈë³É¹¦Ôò·µ»Ø<code>true</code>£¬·ñÔò·µ»Ø<code>false</code></returns>
+        /// <returns>è½½å…¥æˆåŠŸåˆ™è¿”å›<code>true</code>ï¼Œå¦åˆ™è¿”å›<code>false</code></returns>
         public static bool TryReloadTree(this IKnowledgeTreeManager treeManager)
         {
             try

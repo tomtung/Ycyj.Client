@@ -1,4 +1,4 @@
-namespace Ycyj.Client.Model
+﻿namespace Ycyj.Client.Model
 {
     public class MsDoc
     {

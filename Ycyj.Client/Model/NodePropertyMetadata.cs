@@ -1,9 +1,9 @@
-using System;
+ï»¿using System;
 
 namespace Ycyj.Client.Model
 {
     /// <summary>
-    /// ÃèÊö½ÚµãÊôĞÔµÄÔªĞÅÏ¢£¬°üÀ¨ÆäÃû³ÆºÍÀàĞÍ¡£
+    /// æè¿°èŠ‚ç‚¹å±æ€§çš„å…ƒä¿¡æ¯ï¼ŒåŒ…æ‹¬å…¶åç§°å’Œç±»å‹ã€‚
     /// </summary>
     public class NodePropertyMetadata
     {
@@ -19,7 +19,7 @@ namespace Ycyj.Client.Model
         }
 
         /// <summary>
-        /// ÊôĞÔÃû¡£
+        /// å±æ€§åã€‚
         /// </summary>
         public string Name
         {
@@ -27,7 +27,7 @@ namespace Ycyj.Client.Model
         }
 
         /// <summary>
-        /// ÊôĞÔÀàĞÍ¡£
+        /// å±æ€§ç±»å‹ã€‚
         /// </summary>
         public Type Type
         {
@@ -66,7 +66,7 @@ namespace Ycyj.Client.Model
     public static class NodePropertyMetadataHelper
     {
         /// <summary>
-        /// ·µ»Ø<paramref name="metadata"/>ËùÃèÊöµÄÊôĞÔµÄÀàĞÍÄÜ·ñ±»¸³Öµ<paramref name="value"/>¡£
+        /// è¿”å›<paramref name="metadata"/>æ‰€æè¿°çš„å±æ€§çš„ç±»å‹èƒ½å¦è¢«èµ‹å€¼<paramref name="value"/>ã€‚
         /// </summary>
         public static bool IsAssignableFromValue(this NodePropertyMetadata metadata, object value)
         {

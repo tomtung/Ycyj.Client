@@ -1,9 +1,9 @@
-using System;
+ï»¿using System;
 
 namespace Ycyj.Client.Model
 {
     /// <summary>
-    /// ½ÚµãµÄÊôĞÔ¡£
+    /// èŠ‚ç‚¹çš„å±æ€§ã€‚
     /// </summary>
     public class NodeProperty
     {
@@ -22,7 +22,7 @@ namespace Ycyj.Client.Model
         }
 
         /// <summary>
-        /// ½ÚµãÊôĞÔµÄÔªĞÅÏ¢¡£
+        /// èŠ‚ç‚¹å±æ€§çš„å…ƒä¿¡æ¯ã€‚
         /// </summary>
         public NodePropertyMetadata PropertyMetadata
         {
@@ -30,7 +30,7 @@ namespace Ycyj.Client.Model
         }
 
         /// <summary>
-        /// ½ÚµãÊôĞÔµÄÖµ¡£
+        /// èŠ‚ç‚¹å±æ€§çš„å€¼ã€‚
         /// </summary>
         public object Value
         {
@@ -44,7 +44,7 @@ namespace Ycyj.Client.Model
         }
 
         /// <summary>
-        /// ½ÚµãÊôĞÔµÄÃû³Æ¡£
+        /// èŠ‚ç‚¹å±æ€§çš„åç§°ã€‚
         /// </summary>
         public string PropertyName
         {
@@ -52,7 +52,7 @@ namespace Ycyj.Client.Model
         }
 
         /// <summary>
-        /// ½ÚµãÊôĞÔµÄÀàĞÍ¡£
+        /// èŠ‚ç‚¹å±æ€§çš„ç±»å‹ã€‚
         /// </summary>
         public Type PropertyType
         {

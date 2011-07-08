@@ -1,4 +1,4 @@
-using GalaSoft.MvvmLight.Messaging;
+﻿using GalaSoft.MvvmLight.Messaging;
 using Ycyj.Client.Model;
 
 namespace Ycyj.Client.Message

@@ -1,4 +1,4 @@
-using Moq;
+ï»¿using Moq;
 using Ninject.Modules;
 
 namespace Ycyj.Client.Model
@@ -13,16 +13,16 @@ namespace Ycyj.Client.Model
 
             var mockNodeManager = new Mock<INodeManager>();
             var nodeMetadata =
-                new NodeMetadata("ÖªÊ¶µã", new[]
+                new NodeMetadata("çŸ¥è¯†ç‚¹", new[]
                                             {
-                                                new NodePropertyMetadata("±êÌâ", typeof (string)),
-                                                new NodePropertyMetadata("ÄÚÈÝ", typeof (MsDoc))
+                                                new NodePropertyMetadata("æ ‡é¢˜", typeof (string)),
+                                                new NodePropertyMetadata("å†…å®¹", typeof (MsDoc))
                                             });
             mockNodeManager.Setup(m => m.GetNodeById(It.IsAny<string>()))
                 .Returns<string>(id =>
                 {
                     dynamic node = new Node(id, nodeMetadata);
-                    node.±êÌâ = "Title for " + id;
+                    node.æ ‡é¢˜ = "Title for " + id;
                     return node;
                 });
             Bind<INodeManager>().ToConstant(mockNodeManager.Object);
