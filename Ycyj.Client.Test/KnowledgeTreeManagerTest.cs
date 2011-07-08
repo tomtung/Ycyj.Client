@@ -37,17 +37,12 @@ namespace Ycyj.Client.Test
 
         private readonly Mock<INodeManager> _mockNodeManager = new Mock<INodeManager>();
 
-        private readonly NodeMetadata _nodeMetadata = new NodeMetadata("知识点", new[]
-                                                                                  {
-                                                                                      new NodePropertyMetadata("标题",
-                                                                                                               typeof (
-                                                                                                                   string
-                                                                                                                   )),
-                                                                                      new NodePropertyMetadata("内容",
-                                                                                                               typeof (
-                                                                                                                   MsDoc
-                                                                                                                   ))
-                                                                                  });
+        private readonly NodeMetadata _nodeMetadata
+            = new NodeMetadata("知识点", new[]
+                                          {
+                                              new NodePropertyMetadata("标题", typeof (string)),
+                                              new NodePropertyMetadata("内容", typeof (MsDoc))
+                                          });
 
         public KnowledgeTreeManagerTest()
         {

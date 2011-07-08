@@ -2,6 +2,9 @@ using System;
 
 namespace Ycyj.Client.Model
 {
+    /// <summary>
+    /// 描述节点属性的元信息，包括其名称和类型。
+    /// </summary>
     public class NodePropertyMetadata
     {
         private readonly string _name;
@@ -15,11 +18,17 @@ namespace Ycyj.Client.Model
             _type = type;
         }
 
+        /// <summary>
+        /// 属性名。
+        /// </summary>
         public string Name
         {
             get { return _name; }
         }
 
+        /// <summary>
+        /// 属性类型。
+        /// </summary>
         public Type Type
         {
             get { return _type; }
@@ -56,6 +65,9 @@ namespace Ycyj.Client.Model
 
     public static class NodePropertyMetadataHelper
     {
+        /// <summary>
+        /// 返回<paramref name="metadata"/>所描述的属性的类型能否被赋值<paramref name="value"/>。
+        /// </summary>
         public static bool IsAssignableFromValue(this NodePropertyMetadata metadata, object value)
         {
             if (value == null) return !metadata.Type.IsValueType;

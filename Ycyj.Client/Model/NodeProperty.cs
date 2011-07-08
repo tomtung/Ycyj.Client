@@ -2,6 +2,9 @@ using System;
 
 namespace Ycyj.Client.Model
 {
+    /// <summary>
+    /// 节点的属性。
+    /// </summary>
     public class NodeProperty
     {
         private readonly NodePropertyMetadata _metadata;
@@ -18,11 +21,17 @@ namespace Ycyj.Client.Model
             Value = value;
         }
 
+        /// <summary>
+        /// 节点属性的元信息。
+        /// </summary>
         public NodePropertyMetadata PropertyMetadata
         {
             get { return _metadata; }
         }
 
+        /// <summary>
+        /// 节点属性的值。
+        /// </summary>
         public object Value
         {
             get { return _value; }
@@ -34,11 +43,17 @@ namespace Ycyj.Client.Model
             }
         }
 
+        /// <summary>
+        /// 节点属性的名称。
+        /// </summary>
         public string PropertyName
         {
             get { return _metadata.Name; }
         }
 
+        /// <summary>
+        /// 节点属性的类型。
+        /// </summary>
         public Type PropertyType
         {
             get { return _metadata.Type; }
