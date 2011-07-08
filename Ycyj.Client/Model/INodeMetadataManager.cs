@@ -2,9 +2,13 @@
 
 namespace Ycyj.Client.Model
 {
-    // 用来管理整个应用的节点元数据。
-    // 但该有什么行为？和节点元数据冲突要不要处理？还没有想好
-    // 现在只放一个根据元数据名得对象的方法进去
+    /// <summary>
+    /// 用来管理整个应用的节点元数据。
+    /// </summary>
+    /// <remarks>
+    /// 但该有什么行为？和节点元数据冲突要不要处理？还没有想好
+    /// 现在只放一个根据元数据名得对象的方法进去
+    /// </remarks>
     public interface INodeMetadataManager
     {
         NodeMetadata this[string metadataName] { get; }

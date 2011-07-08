@@ -42,6 +42,9 @@
     <Reference Include="GalaSoft.MvvmLight.WPF4">
       <HintPath>..\lib\GalaSoft.MvvmLight.WPF4.dll</HintPath>
     </Reference>
+    <Reference Include="Moq">
+      <HintPath>..\lib\Moq.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject">
       <HintPath>..\lib\Ninject.dll</HintPath>
     </Reference>

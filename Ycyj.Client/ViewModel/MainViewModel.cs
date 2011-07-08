@@ -21,6 +21,8 @@ namespace Ycyj.Client.ViewModel
 
         private ICommand _deleteKnowledgePointCommand;
 
+        private ICommand _selectedItemChangedCommand;
+
         public ICommand AddKnowledgePointCommand
         {
             get
@@ -62,6 +64,17 @@ namespace Ycyj.Client.ViewModel
             }
         }
 
+        public ICommand SelectedItemChangedCommand
+        {
+            get
+            {
+                return _selectedItemChangedCommand ??
+                       (_selectedItemChangedCommand =
+                        new RelayCommand<TreeNodeViewModel>(
+                            selected => SelectedTreeNode = selected));
+            }
+        }
+
         #endregion
 
         public MainViewModel(IKnowledgeTreeManager knowledgeTreeManager, INodeMetadataManager nodeMetadataManager)
@@ -75,17 +88,8 @@ namespace Ycyj.Client.ViewModel
 
         /// <remarks>
         /// Note: This is not a bindable property!
-        /// To keep sync, the following code should be registered to <see cref="System.Windows.Controls.TreeView.SelectedItemChanged"/>.
-        /// <code>
-        /// private void treeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs&lt;object&gt; e)
-        /// {
-        /// 	try
-        /// 	{
-        /// 		dynamic treeView = sender;
-        /// 		treeView.DataContext.SelectedTreeNode = treeView.SelectedItem;
-        /// 	}catch{}
-        /// }
-        /// </code>
+        /// To keep sync, the view should fire SelectedItemChangedCommand (via EventToCommand)
+        /// and pass the new selected item as its parameter.
         /// </remarks>
         public TreeNodeViewModel SelectedTreeNode
         {
