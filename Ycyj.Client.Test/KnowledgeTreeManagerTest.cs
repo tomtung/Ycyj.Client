@@ -83,7 +83,7 @@ namespace Ycyj.Client.Test
         }
 
         [Fact]
-        public void Given_file_not_exist_when_should_tree_be_empty()
+        public void Given_file_not_exist_when_load_should_tree_be_empty()
         {
             var treeManager = new KnowledgeTreeManager(NonExistentFileName, _mockNodeManager.Object);
 
@@ -91,7 +91,7 @@ namespace Ycyj.Client.Test
         }
 
         [Fact]
-        public void Given_file_corrupted_when_should_tree_be_empty()
+        public void Given_file_corrupted_when_load_should_tree_be_empty()
         {
             var treeManager = new KnowledgeTreeManager(CorruptedFileName, _mockNodeManager.Object);
 
