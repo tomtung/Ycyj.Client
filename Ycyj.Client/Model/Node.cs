@@ -15,6 +15,7 @@ namespace Ycyj.Client.Model
         /// 节点全局唯一的标识。
         /// </summary>
         public readonly string Id;
+
         private readonly NodeMetadata _metadata;
         private readonly IEnumerable<NodeProperty> _properties;
 

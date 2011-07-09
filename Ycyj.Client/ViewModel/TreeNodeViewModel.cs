@@ -21,6 +21,11 @@ namespace Ycyj.Client.ViewModel
             get { return _treeNode; }
         }
 
+        public Node Node
+        {
+            get { return TreeNode.Node; }
+        }
+
         public string Title
         {
             get { return TreeNode.Node["标题"].ToString(); }

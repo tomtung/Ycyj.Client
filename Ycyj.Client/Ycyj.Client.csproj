@@ -42,6 +42,9 @@
     <Reference Include="GalaSoft.MvvmLight.WPF4">
       <HintPath>..\lib\GalaSoft.MvvmLight.WPF4.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Office.Interop.Word, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Moq">
       <HintPath>..\lib\Moq.dll</HintPath>
     </Reference>
@@ -72,6 +75,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Message\NodeModifiedMessage.cs" />
+    <Compile Include="Message\Notifications.cs" />
     <Compile Include="Model\DefaultNinjectModule.cs" />
     <Compile Include="Model\INodeManager.cs" />
     <Compile Include="Model\IKnowledgeTreeManager.cs" />
@@ -84,6 +88,9 @@
     <Compile Include="Model\NodeProperty.cs" />
     <Compile Include="Model\NodePropertyMetadata.cs" />
     <Compile Include="Model\TreeNode.cs" />
+    <Compile Include="UserControl\NodeEditorControl.xaml.cs">
+      <DependentUpon>NodeEditorControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\TreeNodeViewModel.cs" />
     <Compile Include="ViewModel\TreeViewItemViewModel.cs" />
@@ -100,6 +107,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UserControl\NodeEditorControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

@@ -10,7 +10,7 @@
         /// </summary>
         /// <returns>若对应节点存在则返回对应对象，否则返回null。</returns>
         Node GetNodeById(string id);
-        
+
         /// <summary>
         /// 增加新节点<paramref name="node"/>。
         /// </summary>

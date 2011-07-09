@@ -2,6 +2,8 @@
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
+using Ycyj.Client.Message;
 using Ycyj.Client.Model;
 
 namespace Ycyj.Client.ViewModel
@@ -9,18 +11,40 @@ namespace Ycyj.Client.ViewModel
     public class MainViewModel : ViewModelBase
     {
         private readonly IKnowledgeTreeManager _knowledgeTreeManager;
-
+        private readonly INodeManager _nodeManager;
         private readonly INodeMetadataManager _nodeMetadataManager;
         private readonly TreeNodeViewModel _treeRoot;
 
         private TreeNodeViewModel _selectedTreeNode;
+
+        #region INPC
+
+        public const string SelectedNodePropertyName = "SelectedNode";
+        private Node _selectedNode;
+
+        public Node SelectedNode
+        {
+            get { return _selectedNode; }
+
+            set
+            {
+                if (_selectedNode == value)
+                    return;
+                _selectedNode = value;
+                RaisePropertyChanged(SelectedNodePropertyName);
+            }
+        }
+
+        #endregion
 
         #region Commands
 
         private ICommand _addKnowledgePointCommand;
 
         private ICommand _deleteKnowledgePointCommand;
+        private ICommand _reloadNodeCommand;
 
+        private ICommand _saveNodeCommand;
         private ICommand _selectedItemChangedCommand;
 
         public ICommand AddKnowledgePointCommand
@@ -35,12 +59,10 @@ namespace Ycyj.Client.ViewModel
                                     NodeMetadata nodeMetadata = _nodeMetadataManager["知识点"];
                                     dynamic node = new Node(nodeMetadata);
                                     node.标题 = "未命名";
-                                    // TODO 把子节点通过INodeManager保存
-
-                                    TreeNodeViewModel parentVm = SelectedTreeNode ?? _treeRoot;
+                                    _nodeManager.AddNode(node);
+                                    TreeNodeViewModel parentVm = SelectedTreeNode ?? TreeRoot;
                                     parentVm.AddChild(node);
                                     parentVm.IsExpanded = true;
-
                                     _knowledgeTreeManager.UpdateTree();
                                 }));
             }
@@ -55,9 +77,8 @@ namespace Ycyj.Client.ViewModel
                         new RelayCommand(
                             () =>
                                 {
+                                    _nodeManager.DeleteNode(SelectedNode);
                                     SelectedTreeNode.DetachFromParent();
-                                    // TODO 把子节点通过INodeManager都删掉
-
                                     _knowledgeTreeManager.UpdateTree();
                                 },
                             () => SelectedTreeNode != null));
@@ -71,18 +92,54 @@ namespace Ycyj.Client.ViewModel
                 return _selectedItemChangedCommand ??
                        (_selectedItemChangedCommand =
                         new RelayCommand<TreeNodeViewModel>(
-                            selected => SelectedTreeNode = selected));
+                            selected =>
+                                {
+                                    UpdateNodeCommand.Execute(null);
+                                    SelectedTreeNode = selected;
+                                    SelectedNode = SelectedTreeNode.Node;
+                                }));
+            }
+        }
+
+        public ICommand UpdateNodeCommand
+        {
+            get
+            {
+                return _saveNodeCommand ??
+                       (_saveNodeCommand =
+                        new RelayCommand(
+                            () => Messenger.Default.Send(
+                                new NotificationMessageAction(this, Notifications.UpdateNode,
+                                                              () => _nodeManager.UpdateNode(SelectedNode))),
+                            () => SelectedNode != null && _nodeManager.GetNodeById(SelectedNode.Id) != null
+                            ));
+            }
+        }
+
+        public ICommand ReloadNodeCommand
+        {
+            get
+            {
+                return _reloadNodeCommand ??
+                       (_reloadNodeCommand =
+                        new RelayCommand(
+                            () => Messenger.Default.Send(new NotificationMessage(this, Notifications.ReloadNode)),
+                            () => SelectedNode != null && _nodeManager.GetNodeById(SelectedNode.Id) != null
+                            ));
             }
         }
 
         #endregion
 
-        public MainViewModel(IKnowledgeTreeManager knowledgeTreeManager, INodeMetadataManager nodeMetadataManager)
+        public MainViewModel(INodeManager nodeManager, INodeMetadataManager nodeMetadataManager,
+                             IKnowledgeTreeManager knowledgeTreeManager)
         {
-            if (knowledgeTreeManager == null) throw new ArgumentNullException("knowledgeTreeManager");
+            if (nodeManager == null) throw new ArgumentNullException("nodeManager");
             if (nodeMetadataManager == null) throw new ArgumentNullException("nodeMetadataManager");
-            _knowledgeTreeManager = knowledgeTreeManager;
+            if (knowledgeTreeManager == null) throw new ArgumentNullException("knowledgeTreeManager");
+            _nodeManager = nodeManager;
             _nodeMetadataManager = nodeMetadataManager;
+            _knowledgeTreeManager = knowledgeTreeManager;
             _treeRoot = new TreeNodeViewModel(_knowledgeTreeManager.Root);
         }
 
