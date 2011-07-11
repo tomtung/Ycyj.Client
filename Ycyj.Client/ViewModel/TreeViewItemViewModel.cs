@@ -1,11 +1,13 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using GalaSoft.MvvmLight;
 
 namespace Ycyj.Client.ViewModel
 {
     public class TreeViewItemViewModel : ViewModelBase
     {
-        protected internal readonly ObservableCollection<TreeViewItemViewModel> ChildrenSource
+        protected readonly ObservableCollection<TreeViewItemViewModel> ChildrenSource
             = new ObservableCollection<TreeViewItemViewModel>();
 
         private readonly ReadOnlyObservableCollection<TreeViewItemViewModel> _children;
@@ -16,7 +18,7 @@ namespace Ycyj.Client.ViewModel
             _children = new ReadOnlyObservableCollection<TreeViewItemViewModel>(ChildrenSource);
         }
 
-        public ReadOnlyObservableCollection<TreeViewItemViewModel> Children
+        public IEnumerable<TreeViewItemViewModel> Children
         {
             get { return _children; }
         }
@@ -75,6 +77,44 @@ namespace Ycyj.Client.ViewModel
                 if (_isSelected && Parent != null)
                     Parent.IsExpanded = true;
             }
+        }
+
+        #endregion
+
+        #region IsCheckedProperty
+
+        public const string IsCheckedPropertyName = "IsChecked";
+        private bool? _isChecked = false;
+
+        public bool? IsChecked
+        {
+            get { return _isChecked; }
+            set { SetIsChecked(value, true, true); }
+        }
+
+        private void SetIsChecked(bool? value, bool updateChildren, bool updateParent)
+        {
+            if (value == _isChecked)
+                return;
+            _isChecked = value;
+
+            if (updateChildren && _isChecked != null)
+                foreach (TreeViewItemViewModel child in Children)
+                    child.SetIsChecked(_isChecked, true, false);
+
+            if (updateParent && Parent != null)
+                Parent.VerifyCheckState();
+            RaisePropertyChanged(IsCheckedPropertyName);
+        }
+
+        private void VerifyCheckState()
+        {
+            if (_children.Count == 0) return;
+
+            bool? state = Children.All(child => child.IsChecked == Children.First().IsChecked)
+                              ? Children.First().IsChecked
+                              : null;
+            SetIsChecked(state, false, true);
         }
 
         #endregion
