@@ -20,6 +20,10 @@ namespace Ycyj.Client.ViewModel
         #region INPC
 
         public const string SelectedNodePropertyName = "SelectedNode";
+
+        public const string IsEditingProblemPropertyName = "IsEditingProblem";
+
+        private bool _isEditingProblem;
         private Node _selectedNode;
 
         public Node SelectedNode
@@ -35,17 +39,37 @@ namespace Ycyj.Client.ViewModel
             }
         }
 
+        public bool IsEditingProblem
+        {
+            get { return _isEditingProblem; }
+
+            set
+            {
+                if (_isEditingProblem == value)
+                {
+                    return;
+                }
+                _isEditingProblem = value;
+
+                RaisePropertyChanged(IsEditingProblemPropertyName);
+            }
+        }
+
         #endregion
 
         #region Commands
 
         private ICommand _addKnowledgePointCommand;
+        private ICommand _addProblemCommand;
 
         private ICommand _deleteKnowledgePointCommand;
+        private ICommand _endAddingProblemsCommand;
         private ICommand _reloadNodeCommand;
+        private ICommand _saveAndEndAddingProblemsCommand;
 
         private ICommand _saveNodeCommand;
         private ICommand _selectedItemChangedCommand;
+        private ICommand _startAddingProblemsCommand;
 
         public ICommand AddKnowledgePointCommand
         {
@@ -97,7 +121,8 @@ namespace Ycyj.Client.ViewModel
                                     if (UpdateNodeCommand.CanExecute(null))
                                         UpdateNodeCommand.Execute(null);
                                     SelectedTreeNode = selected;
-                                    SelectedNode = SelectedTreeNode.Node;
+                                    if (!IsEditingProblem)
+                                        SelectedNode = SelectedTreeNode != null ? SelectedTreeNode.Node : null;
                                 }));
             }
         }
@@ -122,7 +147,7 @@ namespace Ycyj.Client.ViewModel
                                                                                   ();
                                                                           }));
                                 },
-                            () => SelectedTreeNode != null && _nodeManager.GetNodeById(SelectedNode.Id) != null
+                            () => SelectedNode != null && _nodeManager.GetNodeById(SelectedNode.Id) != null
                             ));
             }
         }
@@ -136,6 +161,73 @@ namespace Ycyj.Client.ViewModel
                         new RelayCommand(
                             () => Messenger.Default.Send(new NotificationMessage(this, Notifications.ReloadNode)),
                             () => SelectedNode != null && _nodeManager.GetNodeById(SelectedNode.Id) != null
+                            ));
+            }
+        }
+
+        public ICommand StartAddingProblemsCommand
+        {
+            get
+            {
+                return _startAddingProblemsCommand ??
+                       (_startAddingProblemsCommand =
+                        new RelayCommand(
+                            () =>
+                                {
+                                    if (SelectedTreeNode != null)
+                                        SelectedTreeNode.IsChecked = true;
+                                    SelectedNode = null;
+                                    IsEditingProblem = true;
+                                }
+                            ));
+            }
+        }
+
+        public ICommand EndAddingProblemsCommand
+        {
+            get
+            {
+                return _endAddingProblemsCommand ??
+                       (_endAddingProblemsCommand =
+                        new RelayCommand(
+                            () =>
+                                {
+                                    IsEditingProblem = false;
+                                    TreeRoot.IsChecked = false;
+                                    SelectedItemChangedCommand.Execute(SelectedTreeNode);
+                                }
+                            ));
+            }
+        }
+
+        public ICommand AddProblemCommand
+        {
+            get
+            {
+                return _addProblemCommand ??
+                       (_addProblemCommand =
+                        new RelayCommand(
+                            () =>
+                                {
+                                    // TODO
+                                }
+                            ));
+            }
+        }
+
+        public ICommand SaveAndEndAddingProblemsCommand
+        {
+            get
+            {
+                return _saveAndEndAddingProblemsCommand ??
+                       (_saveAndEndAddingProblemsCommand =
+                        new RelayCommand(
+                            () =>
+                                {
+                                    // TODO Node saving logic (both node per se and pairs)
+                                    ;
+                                    EndAddingProblemsCommand.Execute(null);
+                                }
                             ));
             }
         }

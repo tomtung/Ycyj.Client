@@ -4,52 +4,94 @@
         xmlns:Command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF4"
         xmlns:UserControl="clr-namespace:Ycyj.Client.UserControl" Title="MainWindow" Height="377" Width="559"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
-
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition />
-      <RowDefinition Height="Auto" />
-    </Grid.RowDefinitions>
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="*" />
-      <ColumnDefinition Width="2*" />
-    </Grid.ColumnDefinitions>
-    <TreeView Grid.Row="0" ItemsSource="{Binding TreeRoot.Children}">
-      <i:Interaction.Triggers>
-        <i:EventTrigger EventName="SelectedItemChanged">
-          <Command:EventToCommand Command="{Binding SelectedItemChangedCommand, Mode=OneWay}"
-                                  CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource FindAncestor, AncestorType=TreeView}}" />
-        </i:EventTrigger>
-      </i:Interaction.Triggers>
-      <TreeView.ItemContainerStyle>
-        <Style TargetType="TreeViewItem">
-          <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-          <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-          <Setter Property="FontWeight" Value="Normal" />
-          <Style.Triggers>
-            <Trigger Property="IsSelected" Value="True">
-              <Setter Property="FontWeight" Value="Bold" />
-            </Trigger>
-          </Style.Triggers>
+    <Window.Resources>
+        <Style x:Key="ProblemEditingStyle" TargetType="FrameworkElement">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Style.Triggers>
+                <DataTrigger
+Binding="{Binding DataContext.IsEditingProblem, RelativeSource={RelativeSource FindAncestor, AncestorType=ContentControl}}"
+Value="True">
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
-      </TreeView.ItemContainerStyle>
-      <TreeView.Resources>
-        <HierarchicalDataTemplate DataType="{x:Type ViewModel:TreeNodeViewModel}" ItemsSource="{Binding Children}">
-          <StackPanel Orientation="Horizontal">
-            <CheckBox IsChecked="{Binding IsChecked}" />
-            <TextBlock Text="{Binding Title}" />
-          </StackPanel>
-        </HierarchicalDataTemplate>
-      </TreeView.Resources>
-    </TreeView>
-    <StackPanel Grid.Row="1">
-      <Button Content="增加知识点" Command="{Binding AddKnowledgePointCommand}" />
-      <Button Content="删除知识点" Command="{Binding DeleteKnowledgePointCommand}" />
-    </StackPanel>
-    <UserControl:NodeEditorControl Grid.Column="1" Node="{Binding SelectedNode}" />
-    <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-      <Button Content="保存" Command="{Binding UpdateNodeCommand}" />
-      <Button Content="重置" Command="{Binding ReloadNodeCommand}" />
-    </StackPanel>
-  </Grid>
+        <Style x:Key="KnowledgePointEditingStyle" TargetType="FrameworkElement">
+            <Setter Property="Visibility" Value="Visible" />
+            <Style.Triggers>
+                <DataTrigger
+Binding="{Binding DataContext.IsEditingProblem, RelativeSource={RelativeSource FindAncestor, AncestorType=ContentControl}}"
+Value="True">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TreeView Grid.Row="0" ItemsSource="{Binding TreeRoot.Children}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectedItemChanged">
+                        <Command:EventToCommand Command="{Binding SelectedItemChangedCommand, Mode=OneWay}"
+                                                CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource FindAncestor, AncestorType=TreeView}}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="TreeViewItem">
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                        <Setter Property="FontWeight" Value="Normal" />
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="FontWeight" Value="Bold" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TreeView.ItemContainerStyle>
+                <TreeView.Resources>
+                    <HierarchicalDataTemplate DataType="{x:Type ViewModel:TreeNodeViewModel}"
+                                              ItemsSource="{Binding Children}">
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding IsChecked}" Style="{StaticResource ProblemEditingStyle}" />
+                            <TextBlock Text="{Binding Title}" />
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                </TreeView.Resources>
+            </TreeView>
+            <StackPanel Grid.Row="1" Style="{StaticResource KnowledgePointEditingStyle}">
+                <Button Content="增加知识点" Command="{Binding AddKnowledgePointCommand}" />
+                <Button Content="删除知识点" Command="{Binding DeleteKnowledgePointCommand}" />
+                <Button Content="开始添加题目" Command="{Binding StartAddingProblemsCommand}" />
+            </StackPanel>
+            <StackPanel Grid.Row="1" Style="{StaticResource ProblemEditingStyle}">
+                <Button Content="添加新题目" Command="{Binding AddProblemCommand}" />
+                <Button Content="放弃添加" Command="{Binding EndAddingProblemsCommand}" />
+                <Button Content="完成添加" Command="{Binding SaveAndEndAddingProblemsCommand}" />
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <UserControl:NodeEditorControl Grid.Column="1" Node="{Binding SelectedNode}" />
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="保存" Command="{Binding UpdateNodeCommand}" Width="100" Padding="5" Margin="1" />
+                <Button Content="重置" Command="{Binding ReloadNodeCommand}" Width="100" Padding="5" Margin="1" />
+            </StackPanel>
+        </Grid>
+    </Grid>
 </Window>

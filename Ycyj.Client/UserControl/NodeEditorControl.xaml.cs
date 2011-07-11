@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using GalaSoft.MvvmLight.Messaging;
@@ -71,7 +72,8 @@ namespace Ycyj.Client.UserControl
         {
             _stackPanel.Children.Clear();
             _propertyRetrieveCallbacks.Clear();
-            PropertyEditHelperForMsDoc.ResetWordApp();
+            if (!DesignerProperties.GetIsInDesignMode(this))
+                PropertyEditHelperForMsDoc.ResetWordApp();
             if (Node == null) return;
 
             _stackPanel.Children.Add(new TextBlock {Text = Node.Metadata.Name, FontWeight = FontWeights.Bold});
