@@ -4,6 +4,7 @@ namespace Ycyj.Client.ViewModel
 {
     public class TreeNodeViewModel : TreeViewItemViewModel
     {
+        private const string TitlePropertyName = "Title";
         private readonly TreeNode _treeNode;
 
         public TreeNodeViewModel(TreeNode treeNode, TreeViewItemViewModel parent) : base(parent)
@@ -29,6 +30,11 @@ namespace Ycyj.Client.ViewModel
         public string Title
         {
             get { return TreeNode.Node["标题"].ToString(); }
+        }
+
+        public void RaiseTitlePropertyChanged()
+        {
+            RaisePropertyChanged(TitlePropertyName);
         }
 
         private void LoadChildren()

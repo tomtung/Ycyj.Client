@@ -94,7 +94,8 @@ namespace Ycyj.Client.ViewModel
                         new RelayCommand<TreeNodeViewModel>(
                             selected =>
                                 {
-                                    UpdateNodeCommand.Execute(null);
+                                    if (UpdateNodeCommand.CanExecute(null))
+                                        UpdateNodeCommand.Execute(null);
                                     SelectedTreeNode = selected;
                                     SelectedNode = SelectedTreeNode.Node;
                                 }));
@@ -108,10 +109,20 @@ namespace Ycyj.Client.ViewModel
                 return _saveNodeCommand ??
                        (_saveNodeCommand =
                         new RelayCommand(
-                            () => Messenger.Default.Send(
-                                new NotificationMessageAction(this, Notifications.UpdateNode,
-                                                              () => _nodeManager.UpdateNode(SelectedNode))),
-                            () => SelectedNode != null && _nodeManager.GetNodeById(SelectedNode.Id) != null
+                            () =>
+                                {
+                                    TreeNodeViewModel selectedTreeNode = SelectedTreeNode;
+                                    Messenger.Default.Send(
+                                        new NotificationMessageAction(this, Notifications.UpdateNode,
+                                                                      () =>
+                                                                          {
+                                                                              _nodeManager.UpdateNode(
+                                                                                  selectedTreeNode.Node);
+                                                                              selectedTreeNode.RaiseTitlePropertyChanged
+                                                                                  ();
+                                                                          }));
+                                },
+                            () => SelectedTreeNode != null && _nodeManager.GetNodeById(SelectedNode.Id) != null
                             ));
             }
         }
