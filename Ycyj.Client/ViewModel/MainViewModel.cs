@@ -13,29 +13,30 @@ namespace Ycyj.Client.ViewModel
         private readonly IKnowledgeTreeManager _knowledgeTreeManager;
         private readonly INodeManager _nodeManager;
         private readonly INodeMetadataManager _nodeMetadataManager;
+        private readonly INodePairManager _nodePairManager;
         private readonly TreeNodeViewModel _treeRoot;
 
         private TreeNodeViewModel _selectedTreeNode;
 
         #region INPC
 
-        public const string SelectedNodePropertyName = "SelectedNode";
+        public const string NodeBeingEditedPropertyName = "NodeBeingEdited";
 
         public const string IsEditingProblemPropertyName = "IsEditingProblem";
 
         private bool _isEditingProblem;
-        private Node _selectedNode;
+        private Node _nodeBeingEdited;
 
-        public Node SelectedNode
+        public Node NodeBeingEdited
         {
-            get { return _selectedNode; }
+            get { return _nodeBeingEdited; }
 
             set
             {
-                if (_selectedNode == value)
+                if (_nodeBeingEdited == value)
                     return;
-                _selectedNode = value;
-                RaisePropertyChanged(SelectedNodePropertyName);
+                _nodeBeingEdited = value;
+                RaisePropertyChanged(NodeBeingEditedPropertyName);
             }
         }
 
@@ -101,7 +102,7 @@ namespace Ycyj.Client.ViewModel
                         new RelayCommand(
                             () =>
                                 {
-                                    _nodeManager.DeleteNode(SelectedNode);
+                                    _nodeManager.DeleteNode(NodeBeingEdited);
                                     SelectedTreeNode.DetachFromParent();
                                     _knowledgeTreeManager.UpdateTree();
                                 },
@@ -122,7 +123,7 @@ namespace Ycyj.Client.ViewModel
                                         UpdateNodeCommand.Execute(null);
                                     SelectedTreeNode = selected;
                                     if (!IsEditingProblem)
-                                        SelectedNode = SelectedTreeNode != null ? SelectedTreeNode.Node : null;
+                                        NodeBeingEdited = SelectedTreeNode != null ? SelectedTreeNode.Node : null;
                                 }));
             }
         }
@@ -147,7 +148,9 @@ namespace Ycyj.Client.ViewModel
                                                                                   ();
                                                                           }));
                                 },
-                            () => SelectedNode != null && _nodeManager.GetNodeById(SelectedNode.Id) != null
+                            () =>
+                            !IsEditingProblem && NodeBeingEdited != null &&
+                            _nodeManager.GetNodeById(NodeBeingEdited.Id) != null
                             ));
             }
         }
@@ -160,7 +163,7 @@ namespace Ycyj.Client.ViewModel
                        (_reloadNodeCommand =
                         new RelayCommand(
                             () => Messenger.Default.Send(new NotificationMessage(this, Notifications.ReloadNode)),
-                            () => SelectedNode != null && _nodeManager.GetNodeById(SelectedNode.Id) != null
+                            () => NodeBeingEdited != null && _nodeManager.GetNodeById(NodeBeingEdited.Id) != null
                             ));
             }
         }
@@ -176,8 +179,9 @@ namespace Ycyj.Client.ViewModel
                                 {
                                     if (SelectedTreeNode != null)
                                         SelectedTreeNode.IsChecked = true;
-                                    SelectedNode = null;
+                                    NodeBeingEdited = null;
                                     IsEditingProblem = true;
+                                    AddProblemCommand.Execute(null);
                                 }
                             ));
             }
@@ -194,6 +198,7 @@ namespace Ycyj.Client.ViewModel
                                 {
                                     IsEditingProblem = false;
                                     TreeRoot.IsChecked = false;
+                                    NodeBeingEdited = null;
                                     SelectedItemChangedCommand.Execute(SelectedTreeNode);
                                 }
                             ));
@@ -209,7 +214,10 @@ namespace Ycyj.Client.ViewModel
                         new RelayCommand(
                             () =>
                                 {
-                                    // TODO
+                                    if (NodeBeingEdited != null)
+                                        SaveCurrentProblemNode();
+                                    NodeMetadata nodeMetadata = _nodeMetadataManager["题目"];
+                                    NodeBeingEdited = new Node(nodeMetadata);
                                 }
                             ));
             }
@@ -224,25 +232,42 @@ namespace Ycyj.Client.ViewModel
                         new RelayCommand(
                             () =>
                                 {
-                                    // TODO Node saving logic (both node per se and pairs)
-                                    ;
+                                    SaveCurrentProblemNode();
                                     EndAddingProblemsCommand.Execute(null);
                                 }
                             ));
             }
         }
 
+        private void SaveCurrentProblemNode()
+        {
+            _nodeManager.AddNode(NodeBeingEdited);
+            TryPairWithEditedNode(TreeRoot);
+        }
+
+        private void TryPairWithEditedNode(TreeNodeViewModel treeNode)
+        {
+            if (treeNode.IsChecked == false)
+                return;
+            if (treeNode.IsChecked == true)
+                _nodePairManager.PairNodes(NodeBeingEdited, treeNode.Node);
+            foreach (TreeViewItemViewModel child in treeNode.Children)
+                TryPairWithEditedNode(child as TreeNodeViewModel);
+        }
+
         #endregion
 
         public MainViewModel(INodeManager nodeManager, INodeMetadataManager nodeMetadataManager,
-                             IKnowledgeTreeManager knowledgeTreeManager)
+                             IKnowledgeTreeManager knowledgeTreeManager, INodePairManager nodePairManager)
         {
             if (nodeManager == null) throw new ArgumentNullException("nodeManager");
             if (nodeMetadataManager == null) throw new ArgumentNullException("nodeMetadataManager");
             if (knowledgeTreeManager == null) throw new ArgumentNullException("knowledgeTreeManager");
+            if (nodePairManager == null) throw new ArgumentNullException("nodePairManager");
             _nodeManager = nodeManager;
             _nodeMetadataManager = nodeMetadataManager;
             _knowledgeTreeManager = knowledgeTreeManager;
+            _nodePairManager = nodePairManager;
             _treeRoot = new TreeNodeViewModel(_knowledgeTreeManager.Root);
         }
 

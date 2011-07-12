@@ -12,6 +12,7 @@ namespace Ycyj.Client.Model
             Bind<string>().ToConstant("./tree.xml").WhenInjectedInto<KnowledgeTreeManager>();
             Bind<INodeMetadataManager>().To<MockNodeMetadataManager>().InSingletonScope();
             Bind<INodeManager>().ToConstant(MockNodeManager());
+            Bind<INodePairManager>().ToConstant(MockNodePairManager());
         }
 
         private static INodeManager MockNodeManager()
@@ -37,6 +38,19 @@ namespace Ycyj.Client.Model
             mockNodeManager.Setup(m => m.DeleteNode(It.IsAny<Node>()))
                 .Callback((Node node) => { Debug.WriteLine("Delete Node"); });
             return mockNodeManager.Object;
+        }
+
+        private static INodePairManager MockNodePairManager()
+        {
+            var mockNodePairManager = new Mock<INodePairManager>();
+            mockNodePairManager.Setup(m => m.PairNodes(It.IsAny<Node>(), It.IsAny<Node>()))
+                .Callback((Node node1, Node node2) =>
+                              {
+                                  Debug.WriteLine("Pair Node");
+                                  Debug.WriteLine("Node1: " + node1.Id);
+                                  Debug.WriteLine("Node2: " + node2.Id);
+                              });
+            return mockNodePairManager.Object;
         }
     }
 }

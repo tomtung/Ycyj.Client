@@ -73,7 +73,9 @@ Value="True">
             <StackPanel Grid.Row="1" Style="{StaticResource KnowledgePointEditingStyle}">
                 <Button Content="增加知识点" Command="{Binding AddKnowledgePointCommand}" />
                 <Button Content="删除知识点" Command="{Binding DeleteKnowledgePointCommand}" />
-                <Button Content="开始添加题目" Command="{Binding StartAddingProblemsCommand}" />
+                <Button Content="保存知识点" Command="{Binding UpdateNodeCommand}" />
+                <Button Content="重置知识点" Command="{Binding ReloadNodeCommand}" />
+                <Button Content="开始添加题目" Command="{Binding StartAddingProblemsCommand}" Margin="1" />
             </StackPanel>
             <StackPanel Grid.Row="1" Style="{StaticResource ProblemEditingStyle}">
                 <Button Content="添加新题目" Command="{Binding AddProblemCommand}" />
@@ -82,16 +84,6 @@ Value="True">
             </StackPanel>
         </Grid>
 
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <UserControl:NodeEditorControl Grid.Column="1" Node="{Binding SelectedNode}" />
-            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="保存" Command="{Binding UpdateNodeCommand}" Width="100" Padding="5" Margin="1" />
-                <Button Content="重置" Command="{Binding ReloadNodeCommand}" Width="100" Padding="5" Margin="1" />
-            </StackPanel>
-        </Grid>
+        <UserControl:NodeEditorControl Grid.Column="1" Node="{Binding NodeBeingEdited}" />
     </Grid>
 </Window>

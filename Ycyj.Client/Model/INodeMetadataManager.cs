@@ -25,12 +25,25 @@ namespace Ycyj.Client.Model
                 switch (metadataName)
                 {
                     case "知识点":
-                        var propertyMetadata = new[]
-                                                   {
-                                                       new NodePropertyMetadata("标题", typeof (string)),
-                                                       new NodePropertyMetadata("内容", typeof (MsDoc))
-                                                   };
-                        return new NodeMetadata("知识点", propertyMetadata);
+                        {
+                            var propertyMetadata = new[]
+                                                       {
+                                                           new NodePropertyMetadata("标题", typeof (string)),
+                                                           new NodePropertyMetadata("内容", typeof (MsDoc))
+                                                       };
+                            return new NodeMetadata("知识点", propertyMetadata);
+                        }
+                    case "题目":
+                        {
+                            var propertyMetadata = new[]
+                                                       {
+                                                           new NodePropertyMetadata("题面", typeof (MsDoc)),
+                                                           new NodePropertyMetadata("解析", typeof (MsDoc)),
+                                                           new NodePropertyMetadata("答案", typeof (MsDoc)),
+                                                           new NodePropertyMetadata("备注", typeof (string))
+                                                       };
+                            return new NodeMetadata("题目", propertyMetadata);
+                        }
                     default:
                         throw new NotSupportedException();
                 }
