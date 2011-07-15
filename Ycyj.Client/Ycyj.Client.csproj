@@ -81,13 +81,17 @@
     <Compile Include="Model\IKnowledgeTreeManager.cs" />
     <Compile Include="Model\INodeMetadataManager.cs" />
     <Compile Include="Model\INodePairManager.cs" />
+    <Compile Include="Model\IXml2NodesMetadataConverter.cs" />
     <Compile Include="Model\KnowledgeTreeManager.cs" />
     <Compile Include="Model\MsDoc.cs" />
     <Compile Include="Model\Node.cs" />
+    <Compile Include="Model\NodeManager.cs" />
     <Compile Include="Model\NodeMetadata.cs" />
+    <Compile Include="Model\NodePairManager.cs" />
     <Compile Include="Model\NodeProperty.cs" />
     <Compile Include="Model\NodePropertyMetadata.cs" />
     <Compile Include="Model\TreeNode.cs" />
+    <Compile Include="Model\Xml2NodesMetadataConverter.cs" />
     <Compile Include="UserControl\NodeEditorControl.xaml.cs">
       <DependentUpon>NodeEditorControl.xaml</DependentUpon>
     </Compile>
