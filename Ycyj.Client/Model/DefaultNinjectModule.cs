@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Moq;
 using Ninject.Modules;
+using Ninject.Parameters;
 
 namespace Ycyj.Client.Model
 {
@@ -8,11 +9,18 @@ namespace Ycyj.Client.Model
     {
         public override void Load()
         {
-            Bind<IKnowledgeTreeManager>().To<KnowledgeTreeManager>().InSingletonScope();
-            Bind<string>().ToConstant("./tree.xml").WhenInjectedInto<KnowledgeTreeManager>();
+            Bind<IKnowledgeTreeManager>().To<KnowledgeTreeManager>().InSingletonScope()
+                .WithConstructorArgument("xmlFilePath", "./tree.xml");
+            //Bind<string>().ToConstant("./tree.xml").WhenInjectedInto<KnowledgeTreeManager>();
+            
             Bind<INodeMetadataManager>().To<MockNodeMetadataManager>().InSingletonScope();
-            Bind<INodeManager>().ToConstant(MockNodeManager());
-            Bind<INodePairManager>().ToConstant(MockNodePairManager());
+            
+            //Bind<INodeManager>().ToConstant(MockNodeManager());
+            Bind<INodeManager>().To<NodeManager>().InSingletonScope().WithConstructorArgument("rootPath", "./nodes");
+
+            //Bind<INodePairManager>().ToConstant(MockNodePairManager());
+            Bind<INodePairManager>().To<NodePairManager>().InSingletonScope()
+                .WithConstructorArgument("xmlFilePath", "./pairs.xml");
         }
 
         private static INodeManager MockNodeManager()

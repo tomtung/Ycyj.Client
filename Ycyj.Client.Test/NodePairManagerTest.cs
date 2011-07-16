@@ -108,7 +108,7 @@ namespace Ycyj.Client.Test
         [Fact]
         public void Given_file_not_exist_when_load_should_tree_be_null()
         {
-            var nodePairManager = new NodePairManager(NonExistentFileName);
+            var nodePairManager = new NodePairManager(NonExistentFileName, _mockNodeManager.Object);
 
             nodePairManager.GetPairedNodesOf(nodea).Should().BeNull();
         }
@@ -116,7 +116,7 @@ namespace Ycyj.Client.Test
         [Fact]
         public void Given_file_is_valid_when_load_should_pair_nodes_be_correct()
         {
-            var nodePairManager = new NodePairManager(CorrectFileName);
+            var nodePairManager = new NodePairManager(CorrectFileName, _mockNodeManager.Object);
             Node[] pairNodes = nodePairManager.GetPairedNodesOf(nodea).ToArray();
             pairNodes.ElementAt(0).Id.Should().Be("bbb");
             pairNodes.ElementAt(1).Id.Should().Be("ccc");
@@ -126,7 +126,7 @@ namespace Ycyj.Client.Test
         [Fact]
         public void Given_file_is_valid_when_load_shold_pair_and_unpair_method_be_correct()
         {
-            var nodePairManager = new NodePairManager(CorrectFileName);
+            var nodePairManager = new NodePairManager(CorrectFileName, _mockNodeManager.Object);
             nodePairManager.UnpairNodes(nodea, nodeb);
             var document = new XmlDocument();
             document.Load(CorrectFileName);

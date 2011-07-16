@@ -9,10 +9,16 @@ namespace Ycyj.Client.Model
 {
     public class NodeManager : INodeManager
     {
+        private readonly string _rootPath;
+
+        public NodeManager(string rootPath)
+        {
+            _rootPath = rootPath;
+        }
 
         public Node GetNodeById(string id)
         {
-            var nodePath = id;
+            var nodePath = Path.Combine(_rootPath, id);
             if (!Directory.Exists(id))
                 return null;
             var metaDataXmlFile = Path.Combine(nodePath, "metadata.xml");
@@ -75,39 +81,32 @@ namespace Ycyj.Client.Model
 
         public void AddNode(Node node)
         {
-            var id = node.Id;
-            var nodePath = id;
+            var nodePath = Path.Combine(_rootPath, node.Id);
             Directory.CreateDirectory(nodePath);
             addOrUpdateNode(node, nodePath);
         }
 
         public void UpdateNode(Node node)
         {
-            var id = node.Id;
-            var nodePath = id;
+            var nodePath = Path.Combine(_rootPath, node.Id);
             addOrUpdateNode(node, nodePath);
         }
 
         public void DeleteNode(Node node)
         {
-            var id = node.Id;
-            var nodePath = id;
+            var nodePath = Path.Combine(_rootPath, node.Id);
             string[] fileList = Directory.GetFiles(nodePath);
-            foreach (var file in fileList)
-            {
-                File.Delete(file);
-            }
+            //foreach (var file in fileList)
+            //    File.Delete(file);
             Directory.Delete(nodePath, true);
         }
 
         private void addOrUpdateNode(Node node, string nodePath)
         {
-            XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
-            xmlWriterSettings.OmitXmlDeclaration = false;
-            xmlWriterSettings.Indent = true;
+            var xmlWriterSettings = new XmlWriterSettings {OmitXmlDeclaration = false, Indent = true};
 
-            var metaDataXml = "metadata.xml";
-            var dataXml = "data.xml";
+            const string metaDataXml = "metadata.xml";
+            const string dataXml = "data.xml";
             var metaDataXmlFile = Path.Combine(nodePath, metaDataXml);
             var dataXmlFile = Path.Combine(nodePath, dataXml);
 
@@ -116,7 +115,7 @@ namespace Ycyj.Client.Model
 
             //write metadata.xml
 
-            var xw = XmlWriter.Create(metaDataXml, xmlWriterSettings);
+            var xw = XmlWriter.Create(metaDataXmlFile, xmlWriterSettings);
             xw.WriteStartDocument();
             xw.WriteStartElement("NodeMetadata");
             xw.WriteAttributeString("Name", node.Metadata.Name);
@@ -163,18 +162,12 @@ namespace Ycyj.Client.Model
 
 
             //write xml files of msdoc
-            foreach (var npm in nodeProperties)
+            foreach (var npm in nodeProperties.Where(p => p.PropertyType == typeof(MsDoc)))
             {
-                if (npm.PropertyType == typeof(MsDoc))
-                {
-                    var msDocXmlFile = Path.Combine(nodePath, npm.PropertyName + ".xml");
-                    var fs = new FileStream(msDocXmlFile, FileMode.Create, FileAccess.ReadWrite);
-                    var sw = new StreamWriter(fs, Encoding.UTF8);
-                    sw.WriteLine(((MsDoc)(npm.Value)).Content);
-                    sw.Flush();
-                    sw.Close();
-                    fs.Close();
-                }
+                var msDocXmlFile = Path.Combine(nodePath, npm.PropertyName + ".xml");
+                using (var fs = new FileStream(msDocXmlFile, FileMode.Create, FileAccess.ReadWrite))
+                using (var sw = new StreamWriter(fs, Encoding.UTF8))
+                    if (npm.Value != null) sw.WriteLine(((MsDoc) (npm.Value)).Content);
             }
         }
     }

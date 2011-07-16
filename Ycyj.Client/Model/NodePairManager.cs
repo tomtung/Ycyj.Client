@@ -9,10 +9,12 @@ namespace Ycyj.Client.Model
 {
     public class NodePairManager : INodePairManager
     {
+        private readonly INodeManager _nodeManager;
         public string XmlFilePath { get; private set; }
-        public NodePairManager(string xmlFilePath)
+        public NodePairManager(string xmlFilePath, INodeManager nodemanager)
         {
             XmlFilePath = xmlFilePath;
+            _nodeManager = nodemanager;
         }
 
         public IEnumerable<Node> GetPairedNodesOf(Node node)
@@ -25,7 +27,6 @@ namespace Ycyj.Client.Model
             try
             {
                 var xmlNodes = xmlNode.ChildNodes;
-                var nodeManager = new NodeManager();
                 for (var i = 0; i < xmlNodes.Count; i++)
                 {
                     var currentXmlNode = xmlNodes[i];
@@ -33,11 +34,11 @@ namespace Ycyj.Client.Model
                     var secondXmlNode = currentXmlNode.ChildNodes[1];
                     if (firstXmlNode.Attributes["Id"].Value.Equals(node.Id))
                     {
-                        pairedNodeList.Add(nodeManager.GetNodeById(secondXmlNode.Attributes["Id"].Value));
+                        pairedNodeList.Add(_nodeManager.GetNodeById(secondXmlNode.Attributes["Id"].Value));
                     }
                     else if (secondXmlNode.Attributes["Id"].Value.Equals(node.Id))
                     {
-                        pairedNodeList.Add(nodeManager.GetNodeById(firstXmlNode.Attributes["Id"].Value));
+                        pairedNodeList.Add(_nodeManager.GetNodeById(firstXmlNode.Attributes["Id"].Value));
                     }
                 }
             }
