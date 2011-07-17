@@ -41,11 +41,21 @@ namespace Ycyj.Client.Test
                 File.Delete(CorruptedFileName);
             if (File.Exists(CorrectFileName))
                 File.Delete(CorrectFileName);
+            if(File.Exists(MetaDataXmlFileName))
+                File.Delete(MetaDataXmlFileName);
+            if (File.Exists(DataXmlFileName))
+                File.Delete(DataXmlFileName);
+            if(File.Exists(DaanXmlFileName))
+                File.Delete(DaanXmlFileName);
+            if(File.Exists(FenxiXmlFileName))
+                File.Delete(FenxiXmlFileName);
+            if(File.Exists(TimianXmlFileName))
+                File.Delete(TimianXmlFileName);
         }
 
         #endregion
         private const string DataXmlFileName = "./root/1/data.xml";
-        private const string DataXmlFileContent =
+        private const string DataXmlFileContent = 
             @"<?xml version=""1.0"" encoding=""utf-8""?>
 <Node>
 	<题面 File=""题面.xml""/>
@@ -65,6 +75,9 @@ namespace Ycyj.Client.Test
     <NodeProperty Name=""难度"" Type=""int"" />
 </NodeMetadata>";
 
+        private const string FenxiXmlFileName = "./root/1/分析.xml";
+        private const string TimianXmlFileName = "./root/1/题面.xml";
+        private const string DaanXmlFileName = "./root/1/答案.xml";
         private void SetUpTestFiles()
         {
             if (File.Exists(NonExistentFileName)) File.Delete(NonExistentFileName);
@@ -107,30 +120,39 @@ namespace Ycyj.Client.Test
             node.内容 = new MsDoc {Content = "内容"};
             nodeManager.AddNode(node);
             Directory.Exists("./root/mmm").Should().BeTrue();
+            nodeManager.DeleteNode(node);
         }
 
         [Fact]
         public void Given_id_exist_should_update_node_ok()
         {
             var nodeManager = new NodeManager("./root");
-            var node = new Node("mmm", _nodeMetadata);
-            var msDoc = new MsDoc {Content = "Ddddddddsafd"};
-            node.Properties.ElementAt(0).Value = "ffffds";
-            node.Properties.ElementAt(1).Value = msDoc;
+            dynamic node = new Node("xxx", _nodeMetadata);
+            node.标题 = "标题";
+            node.内容 = new MsDoc { Content = "内容" };
             nodeManager.AddNode(node);
+            Directory.Exists("./root/xxx").Should().BeTrue();
+            node.标题 = "update标题";
+            node.内容 = new MsDoc{Content = "update"}; 
             nodeManager.UpdateNode(node);
-            Directory.Exists("./root/mmm").Should().BeTrue();
+            Directory.Exists("./root/xxx").Should().BeTrue();
+            var fs = new FileStream("./root/xxx/内容.xml", FileMode.Open, FileAccess.Read);
+            var sr = new StreamReader(fs);
+            var s = sr.ReadToEnd();
+            s.Should().Be("update");
+            fs.Close(); sr.Close();
+            nodeManager.DeleteNode(node);
         }
 
         [Fact]
         public void Given_id_exist_should_delete_node_ok()
         {
             var nodeManager = new NodeManager("./root");
-            var node = new Node("mmm", _nodeMetadata);
-            var msDoc = new MsDoc {Content = "Ddddddddsafd"};
-            node.Properties.ElementAt(0).Value = "ffffds";
-            node.Properties.ElementAt(1).Value = msDoc;
+            dynamic node = new Node("mmm", _nodeMetadata);
+            node.标题 = "标题";
+            node.内容 = new MsDoc { Content = "内容" };
             nodeManager.AddNode(node);
+            Directory.Exists("./root/mmm").Should().BeTrue();
             nodeManager.DeleteNode(node);
             Directory.Exists("./root/mmm").Should().BeFalse();
         }

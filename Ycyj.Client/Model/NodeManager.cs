@@ -19,7 +19,7 @@ namespace Ycyj.Client.Model
         public Node GetNodeById(string id)
         {
             var nodePath = Path.Combine(_rootPath, id);
-            if (!Directory.Exists(id))
+            if (!Directory.Exists(nodePath))
                 return null;
             var metaDataXmlFile = Path.Combine(nodePath, "metadata.xml");
 
@@ -31,14 +31,14 @@ namespace Ycyj.Client.Model
 
             var xml2NodesMetadataConverter = new Xml2NodesMetadataConverter();
             var nodeMetadata = xml2NodesMetadataConverter.Extract(metaDataXmlFile);
-            var node = new Node(id, nodeMetadata);
+            dynamic node = new Node(id, nodeMetadata);
 
 
             //read data.xml
             var dataXmlFile = Path.Combine(nodePath, "data.xml");
             using (XmlReader xmlReader = XmlReader.Create(dataXmlFile, xmlReaderSettings))
             {
-                int i = 0; bool visitNode = false;
+                bool visitNode = false;
                 while (xmlReader.Read())
                 {
                     if (!xmlReader.Name.Equals("Node") && visitNode)
@@ -50,27 +50,26 @@ namespace Ycyj.Client.Model
                             var sr = new StreamReader(fs, Encoding.UTF8);
                             var msdoc = new MsDoc();
                             msdoc.Content = sr.ReadToEnd();
+                            node[xmlReader.Name]= msdoc;
                             sr.Close();
                             fs.Close();
-                            node.Properties.ElementAt(i).Value = msdoc;
                         }
                         else
                         {
-                            Type type = node.Metadata.Properties.ElementAt(i).Type;
+                            Type type = NodeMetadataHelper.GetPropertyMetadata(node.Metadata, xmlReader.Name).Type;
                             if (type.Equals(typeof(int)))
                             {
-                                node.Properties.ElementAt(i).Value = Convert.ToInt32(xmlReader.ReadString());
+                                node[xmlReader.Name] = Convert.ToInt32(xmlReader.ReadString());
                             }
                             else if (type.Equals(typeof(decimal)))
                             {
-                                node.Properties.ElementAt(i).Value = Convert.ToDecimal(xmlReader.ReadString());
+                                node[xmlReader.Name]= Convert.ToDecimal(xmlReader.ReadString());
                             }
                             else if (type.Equals(typeof(string)))
                             {
-                                node.Properties.ElementAt(i).Value = xmlReader.ReadString();
+                                node[xmlReader.Name]= xmlReader.ReadString();
                             }
                         }
-                        i++;
                     }
                     else if (xmlReader.Name.Equals("Node")) visitNode = true;
                 }
@@ -124,7 +123,22 @@ namespace Ycyj.Client.Model
             {
                 xw.WriteStartElement("NodeProperty");
                 xw.WriteAttributeString("Name", npm.Name);
-                xw.WriteAttributeString("Type", npm.Type.ToString());
+                if (npm.Type.Equals(typeof(int)))
+                {
+                    xw.WriteAttributeString("Type", "int");
+                }
+                else if (npm.Type.Equals(typeof(decimal)))
+                {
+                    xw.WriteAttributeString("Type", "decimal");
+                }
+                else if (npm.Type.Equals(typeof(string)))
+                {
+                    xw.WriteAttributeString("Type", "string");
+                }
+                else if(npm.Type.Equals(typeof(MsDoc)))
+                {
+                    xw.WriteAttributeString("Type", "msdoc");
+                }
                 xw.WriteEndElement();
             }
             xw.WriteEndElement();
@@ -167,7 +181,7 @@ namespace Ycyj.Client.Model
                 var msDocXmlFile = Path.Combine(nodePath, npm.PropertyName + ".xml");
                 using (var fs = new FileStream(msDocXmlFile, FileMode.Create, FileAccess.ReadWrite))
                 using (var sw = new StreamWriter(fs, Encoding.UTF8))
-                    if (npm.Value != null) sw.WriteLine(((MsDoc) (npm.Value)).Content);
+                    if (npm.Value != null) sw.Write(((MsDoc) (npm.Value)).Content);
             }
         }
     }

@@ -127,24 +127,21 @@ namespace Ycyj.Client.Test
         public void Given_file_is_valid_when_load_shold_pair_and_unpair_method_be_correct()
         {
             var nodePairManager = new NodePairManager(CorrectFileName, _mockNodeManager.Object);
-            nodePairManager.UnpairNodes(nodea, nodeb);
+            bool flag = false;
             var document = new XmlDocument();
             document.Load(CorrectFileName);
-
-            var xmlElement = document.GetElementsByTagName("NodePairs");
             var nodePairElementList = document.GetElementsByTagName("NodePair");
             foreach (XmlElement nodePairElement in nodePairElementList)
             {
-                if (nodePairElement.ChildNodes[0].Attributes["Id"].Value.Equals(nodea.Id))
-                    nodePairElement.ChildNodes[1].Attributes["Id"].Value.Should().NotBe("bbb");
-                if (nodePairElement.ChildNodes[1].Attributes["Id"].Value.Equals(nodea.Id))
-                    nodePairElement.ChildNodes[0].Attributes["Id"].Value.Should().NotBe("bbb");
+                if (nodePairElement.ChildNodes[0].Attributes["Id"].Value.Equals("aaa") && nodePairElement.ChildNodes[1].Attributes["Id"].Value.Equals("bbb"))
+                    flag = true;
+                if (nodePairElement.ChildNodes[1].Attributes["Id"].Value.Equals("aaa") && nodePairElement.ChildNodes[0].Attributes["Id"].Value.Equals("bbb"))
+                    flag = true;
             }
+            flag.Should().BeTrue();
+            nodePairManager.UnpairNodes(nodea, nodeb);
 
-            //nodePairManager.PairNodes(nodea, nodeb);
             document.Load(CorrectFileName);
-
-            xmlElement = document.GetElementsByTagName("NodePairs");
             nodePairElementList = document.GetElementsByTagName("NodePair");
             foreach (XmlElement nodePairElement in nodePairElementList)
             {
@@ -153,7 +150,19 @@ namespace Ycyj.Client.Test
                 if (nodePairElement.ChildNodes[1].Attributes["Id"].Value.Equals(nodea.Id))
                     nodePairElement.ChildNodes[0].Attributes["Id"].Value.Should().NotBe("bbb");
             }
-            ;
+
+            nodePairManager.PairNodes(nodea, nodeb);
+
+            document.Load(CorrectFileName);
+            nodePairElementList = document.GetElementsByTagName("NodePair");
+            foreach (XmlElement nodePairElement in nodePairElementList)
+            {
+                if (nodePairElement.ChildNodes[0].Attributes["Id"].Value.Equals("aaa") && nodePairElement.ChildNodes[1].Attributes["Id"].Value.Equals("bbb"))
+                    flag = true;
+                if (nodePairElement.ChildNodes[1].Attributes["Id"].Value.Equals("aaa") && nodePairElement.ChildNodes[0].Attributes["Id"].Value.Equals("bbb"))
+                    flag = true;
+            }
+            flag.Should().BeTrue();
         }
 
 
