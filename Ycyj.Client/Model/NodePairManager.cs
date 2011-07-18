@@ -14,6 +14,16 @@ namespace Ycyj.Client.Model
         public NodePairManager(string xmlFilePath, INodeManager nodemanager)
         {
             XmlFilePath = xmlFilePath;
+            if(!File.Exists(xmlFilePath))
+            {
+                var xmlWriterSettings = new XmlWriterSettings { OmitXmlDeclaration = false, Indent = true };
+                var xw = XmlWriter.Create(xmlFilePath, xmlWriterSettings);
+                xw.WriteStartDocument();
+                xw.WriteStartElement("NodePairs");
+                xw.WriteEndElement();
+                xw.WriteEndDocument();
+                xw.Close();
+            }
             _nodeManager = nodemanager;
         }
 
@@ -21,7 +31,7 @@ namespace Ycyj.Client.Model
         {
             var pairedNodeList = new List<Node>();
             var document = new XmlDocument();
-            if (!File.Exists(XmlFilePath)) return null;
+            //if (!File.Exists(XmlFilePath)) return null;
             document.Load(XmlFilePath);
             var xmlNode = document.DocumentElement;
             try
@@ -54,7 +64,7 @@ namespace Ycyj.Client.Model
                 xmlReaderSettings.IgnoreWhitespace = true;
                 xmlReaderSettings.IgnoreComments = true;
 
-                if (!File.Exists(XmlFilePath)) return;
+                //if (!File.Exists(XmlFilePath)) return;
                 var document = new XmlDocument();
                 document.Load(XmlFilePath);
 
@@ -82,7 +92,7 @@ namespace Ycyj.Client.Model
                 var xmlReaderSettings = new XmlReaderSettings();
                 xmlReaderSettings.IgnoreWhitespace = true;
                 xmlReaderSettings.IgnoreComments = true;
-                if (!File.Exists(XmlFilePath)) return;
+                //if (!File.Exists(XmlFilePath)) return;
                 var document = new XmlDocument();
                 document.Load(XmlFilePath);
 
