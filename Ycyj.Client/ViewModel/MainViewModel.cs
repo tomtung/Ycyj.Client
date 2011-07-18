@@ -241,8 +241,13 @@ namespace Ycyj.Client.ViewModel
 
         private void SaveCurrentProblemNode()
         {
-            _nodeManager.AddNode(NodeBeingEdited);
-            TryPairWithEditedNode(TreeRoot);
+            Messenger.Default.Send(
+                new NotificationMessageAction(this, Notifications.UpdateNode,
+                                              () =>
+                                                  {
+                                                      _nodeManager.AddNode(NodeBeingEdited);
+                                                      TryPairWithEditedNode(TreeRoot);
+                                                  }));
         }
 
         private void TryPairWithEditedNode(TreeNodeViewModel treeNode)
